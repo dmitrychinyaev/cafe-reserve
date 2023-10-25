@@ -1,6 +1,7 @@
 package ru.dmitrychinyaev.cafereserve.bot;
 
 import lombok.RequiredArgsConstructor;
+import org.joda.time.DateTime;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -11,6 +12,7 @@ import ru.dmitrychinyaev.cafereserve.configuration.TelegramBotConfiguration;
 import ru.dmitrychinyaev.cafereserve.entity.ReservationRequest;
 import ru.dmitrychinyaev.cafereserve.entity.TelegramBotCommon;
 import ru.dmitrychinyaev.cafereserve.service.TelegramBotService;
+import ru.dmitrychinyaev.cafereserve.service.TelegramBotServiceKeyboard;
 
 import java.util.regex.Pattern;
 
@@ -18,6 +20,7 @@ import java.util.regex.Pattern;
 @Component
 public class TelegramBot extends TelegramLongPollingBot {
     private final TelegramBotConfiguration telegramBotConfiguration;
+    private final TelegramBotServiceKeyboard telegramBotServiceKeyboard;
     private final TelegramBotService telegramBotService;
     @Override
     public String getBotUsername() {
@@ -49,11 +52,16 @@ public class TelegramBot extends TelegramLongPollingBot {
         } else if (update.hasCallbackQuery()) {
             String callbackData = update.getCallbackQuery().getData();
             if (Pattern.matches("\\d{2}", callbackData)){
+                telegramBotService.createRequest(makeRequestID(update), callbackData);
                 try {
                     askPersons(update.getCallbackQuery().getMessage().getChatId());
                 } catch (TelegramApiException e) {
                     throw new RuntimeException(e);
                 }
+            }
+            if (Pattern.matches("\\d", callbackData)){
+                telegramBotService.setPersonsToRequest(makeRequestID(update),callbackData);
+
             }
             //long messageId = update.getCallbackQuery().getMessage().getMessageId();
             //long chatId = update.getCallbackQuery().getMessage().getChatId();
@@ -86,14 +94,18 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
 
     private void askDate(long chatId) throws TelegramApiException {
-        execute(telegramBotService.dateKeyboard(chatId));
+        execute(telegramBotServiceKeyboard.dateKeyboard(chatId));
     }
 
     private void askPersons(long chatId) throws TelegramApiException {
-        execute(telegramBotService.personsKeyboard(chatId));
+        execute(telegramBotServiceKeyboard.personsKeyboard(chatId));
     }
     private void askTime(long chatId) throws TelegramApiException {
-        execute(telegramBotService.timeKeyboard(chatId));
+        execute(telegramBotServiceKeyboard.timeKeyboard(chatId));
     }
 
+    private String makeRequestID(Update update){
+        DateTime dateTime = new DateTime();
+        return update.getMessage().getChat().getUserName() + dateTime.toString("dd.MM");
+    }
 }
