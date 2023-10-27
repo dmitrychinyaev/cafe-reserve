@@ -60,7 +60,7 @@ public class TelegramBotServiceKeyboard {
         return message;
     }
 
-    public SendMessage timeKeyboard(long chatId) throws TelegramApiException {
+    public SendMessage timeKeyboard(long chatId, ArrayList<String> availableTime) throws TelegramApiException {
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
         message.setText("На какое время?");
@@ -69,14 +69,11 @@ public class TelegramBotServiceKeyboard {
         List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
         List<InlineKeyboardButton> rowInLine = new ArrayList<>();
 
-        //DateTime dateTime = new DateTime();
-        for (int i = 12; i < 22; i = i + 1) {
+        for (int i = 0; i < availableTime.size(); i++) {
             var button = new InlineKeyboardButton();
-        //    String date = dateTime
-        //            .plusDays(i)
-        //            .toString("dd");
-            button.setText(i + ":00");
-            button.setCallbackData(i + ":00");
+            String time = availableTime.get(i);
+            button.setText(time);
+            button.setCallbackData(time);
             rowInLine.add(button);
         }
 
@@ -85,6 +82,4 @@ public class TelegramBotServiceKeyboard {
         message.setReplyMarkup(markupInLine);
         return message;
     }
-
-
 }

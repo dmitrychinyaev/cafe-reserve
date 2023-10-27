@@ -10,6 +10,10 @@ import java.util.Map;
 public class RequestRepository {
     private Map<String, ReservationRequest> repository = new HashMap<>();
 
+    public ReservationRequest getRequest(String requestID){
+        return repository.get(requestID);
+    }
+
     public void addRequest(String requestId, ReservationRequest reservationRequest){
         repository.put(requestId,reservationRequest);
     }

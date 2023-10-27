@@ -14,6 +14,7 @@ import ru.dmitrychinyaev.cafereserve.entity.TelegramBotCommon;
 import ru.dmitrychinyaev.cafereserve.service.TelegramBotService;
 import ru.dmitrychinyaev.cafereserve.service.TelegramBotServiceKeyboard;
 
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 @RequiredArgsConstructor
@@ -61,7 +62,12 @@ public class TelegramBot extends TelegramLongPollingBot {
             }
             if (Pattern.matches("\\d", callbackData)){
                 telegramBotService.setPersonsToRequest(makeRequestID(update),callbackData);
-
+                ArrayList<String> availableTime = telegramBotService.findAvailableTime(makeRequestID(update));
+                try {
+                    askTime(update.getCallbackQuery().getMessage().getChatId(), availableTime);
+                } catch (TelegramApiException e) {
+                    throw new RuntimeException(e);
+                }
             }
             //long messageId = update.getCallbackQuery().getMessage().getMessageId();
             //long chatId = update.getCallbackQuery().getMessage().getChatId();
@@ -100,12 +106,12 @@ public class TelegramBot extends TelegramLongPollingBot {
     private void askPersons(long chatId) throws TelegramApiException {
         execute(telegramBotServiceKeyboard.personsKeyboard(chatId));
     }
-    private void askTime(long chatId) throws TelegramApiException {
-        execute(telegramBotServiceKeyboard.timeKeyboard(chatId));
+    private void askTime(long chatId, ArrayList<String> availableTime) throws TelegramApiException {
+        execute(telegramBotServiceKeyboard.timeKeyboard(chatId, availableTime));
     }
 
     private String makeRequestID(Update update){
         DateTime dateTime = new DateTime();
-        return update.getMessage().getChat().getUserName() + dateTime.toString("dd.MM");
+        return update.getCallbackQuery().getMessage().getChat().getUserName() + dateTime.toString("dd.MM");
     }
 }
