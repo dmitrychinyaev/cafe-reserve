@@ -33,4 +33,23 @@ public class TelegramBotService {
         }
         return availableTime;
     }
+
+    public void setTimeToRequest(String requestID, String time) {
+        requestRepository.setTime(requestID,time);
+    }
+
+    public void setNamePhoneToRequest(String requestID, String phoneNumber, String name) {
+        requestRepository.setNameAndPhone(requestID,phoneNumber,name);
+    }
+
+    public ReservationRequest findRequest(String requestID) {
+        return requestRepository.getRequest(requestID);
+    }
+
+    public void putRequest(String makeRequestID, String username) {
+        ReservationRequest requestToPut = requestRepository.getRequest(makeRequestID);
+        String keyUpdate = username + requestToPut.getDate();
+        requestRepository.changeKey(keyUpdate, makeRequestID);
+        tables2PersonsRepository.putBooking(requestToPut);
+    }
 }

@@ -5,11 +5,11 @@ import org.springframework.stereotype.Repository;
 import ru.dmitrychinyaev.cafereserve.entity.ReservationRequest;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 @Repository
 public class Tables2PersonsRepository {
-    private List<ArrayList<HashMap<Byte, ReservationRequest>>> arrayTime = new ArrayList<ArrayList<HashMap<Byte, ReservationRequest>>>(8);
+    private final List<ArrayList<LinkedList<ReservationRequest>>> arrayTime = new ArrayList<ArrayList<LinkedList<ReservationRequest>>>(8);
 
     public ArrayList<String> availableTime (ReservationRequest request){
         int requestedDate = dateConvertToElement(request.getDate());
@@ -23,12 +23,12 @@ public class Tables2PersonsRepository {
             initiateInArray(arrayTime.get(requestedDate));
         }
 
-        ArrayList<HashMap<Byte, ReservationRequest>> availableSlots = arrayTime.get(requestedDate);
+        ArrayList<LinkedList<ReservationRequest>> availableSlots = arrayTime.get(requestedDate);
         ArrayList<String> availableTime = new ArrayList<>(11);
         int time = 12;
         for (int i = 0; i < availableSlots.size(); i++) {
-            HashMap<Byte,ReservationRequest> requestHashMap = availableSlots.get(i);
-            if (requestHashMap==null || requestHashMap.size() < 3) {
+            LinkedList<ReservationRequest> requestLinkedList = availableSlots.get(i);
+            if (requestLinkedList == null || requestLinkedList.size() < 3) {
                 availableTime.add(time +":00");
             }
             time++;
@@ -47,6 +47,15 @@ public class Tables2PersonsRepository {
         }
         return dates.indexOf(date);
     }
+
+    public int timeConvertToElement(String time){
+        List<String> times = new ArrayList<>();
+        int openingTime = 12;
+        for (int i = 0; i <11; i++) {
+            times.add(i,openingTime + ":00");
+        }
+        return times.indexOf(time);
+    }
     
     public void initiateFirstArray(){
         for (int i = 0; i < 8; i++) {
@@ -54,9 +63,15 @@ public class Tables2PersonsRepository {
         }
     }
 
-    public void initiateInArray(ArrayList<HashMap<Byte, ReservationRequest>> hashMapArrayList){
+    public void initiateInArray(ArrayList<LinkedList<ReservationRequest>> requestLinkedList){
         for (int i = 0; i < 11; i++) {
-            hashMapArrayList.add(null);
+            requestLinkedList.add(null);
         }
+    }
+
+    public void putBooking(ReservationRequest requestToPut) {
+        int date = dateConvertToElement(requestToPut.getDate());
+        int time = timeConvertToElement(requestToPut.getTime());
+        arrayTime.get(date).get(time).add(requestToPut);
     }
 }

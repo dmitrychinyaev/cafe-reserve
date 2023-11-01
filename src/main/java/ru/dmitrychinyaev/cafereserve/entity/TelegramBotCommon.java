@@ -11,5 +11,11 @@ public class TelegramBotCommon {
 
     //text
 
-    public static final String TEXT_GREETING = "Приветствую, %s!";
+    public static final String TEXT_GREETING = "Hi, %s!";
+
+    public static final String TEXT_ASK_PHONE_NUMBER = "Напишите Ваш номер телефона для связи";
+
+    //regex
+
+    public static final String REGEX_PHONE_NUMBER = "\\d{3}";
 }

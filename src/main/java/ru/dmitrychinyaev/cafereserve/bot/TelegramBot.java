@@ -5,7 +5,6 @@ import org.joda.time.DateTime;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.dmitrychinyaev.cafereserve.configuration.TelegramBotConfiguration;
@@ -37,17 +36,13 @@ public class TelegramBot extends TelegramLongPollingBot {
         if (update.hasMessage() && update.getMessage().hasText()) {
             String messageText = update.getMessage().getText();
             long chatId = update.getMessage().getChatId();
-            String username = update.getMessage().getChat().getUserName();
-            switch (messageText) {
-                case TelegramBotCommon.COMMAND_START -> {
-                    ReservationRequest request = new ReservationRequest();
-                    sendMessage(chatId, String.format(TelegramBotCommon.TEXT_GREETING, username));
-                    try {
-                        askDate(chatId);
-                    } catch (TelegramApiException e) {
-                        throw new RuntimeException(e);
-                    }
-                    break;
+            String username = update.getMessage().getChat().getFirstName();
+            if (messageText.equals(TelegramBotCommon.COMMAND_START)) {
+                sendMessage(chatId, String.format(TelegramBotCommon.TEXT_GREETING, username));
+                try {
+                    askDate(chatId);
+                } catch (TelegramApiException e) {
+                    throw new RuntimeException(e);
                 }
             }
         } else if (update.hasCallbackQuery()) {
@@ -69,22 +64,22 @@ public class TelegramBot extends TelegramLongPollingBot {
                     throw new RuntimeException(e);
                 }
             }
-            //long messageId = update.getCallbackQuery().getMessage().getMessageId();
-            //long chatId = update.getCallbackQuery().getMessage().getChatId();
-            //try {
-            //    executeEditMessageText(callbackData, chatId, messageId);
-            //} catch (TelegramApiException e) {
-            //    throw new RuntimeException(e);
-            //}
+            if(Pattern.matches("\\d{2}:00", callbackData)){
+                telegramBotService.setTimeToRequest(makeRequestID(update),callbackData);
+                sendMessage(update.getCallbackQuery().getMessage().getChatId(), TelegramBotCommon.TEXT_ASK_PHONE_NUMBER);
+            }
+            //TODO это надо вынести в switch выше. У номера нет callback
+            if(Pattern.matches("\\d{4}", callbackData)){
+                String name = update.getCallbackQuery().getMessage().getChat().getFirstName();
+                if(name == null || name.equals("")){
+                    name = update.getCallbackQuery().getMessage().getChat().getUserName();
+                }
+                telegramBotService.setNamePhoneToRequest(makeRequestID(update),callbackData, name);
+                sendMessage(update.getCallbackQuery().getMessage().getChatId(), "good!");
+                sendMessage(update.getCallbackQuery().getMessage().getChatId(),makeFinalPhrase(telegramBotService.findRequest(makeRequestID(update))));
+                telegramBotService.putRequest(makeRequestID(update), update.getCallbackQuery().getMessage().getChat().getUserName());
+            }
         }
-    }
-
-    private void executeEditMessageText(String text, long chatId, long messageId) throws TelegramApiException {
-        EditMessageText message = new EditMessageText();
-        message.setChatId(String.valueOf(chatId));
-        message.setText(text);
-        message.setMessageId((int) messageId);
-        execute(message);
     }
 
     private void sendMessage(long chatId, String textToSend) {
@@ -113,5 +108,9 @@ public class TelegramBot extends TelegramLongPollingBot {
     private String makeRequestID(Update update){
         DateTime dateTime = new DateTime();
         return update.getCallbackQuery().getMessage().getChat().getUserName() + dateTime.toString("dd.MM");
+    }
+
+    private String makeFinalPhrase(ReservationRequest request){
+        return "Бронь на" + request.getName() + " на " + request.getDate() + " в " + request.getTime() + "создана";
     }
 }
