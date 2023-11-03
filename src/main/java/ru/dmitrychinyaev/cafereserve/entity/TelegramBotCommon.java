@@ -7,7 +7,6 @@ public class TelegramBotCommon {
 
     //bot commands
     public static final String COMMAND_START = "/start";
-    public static final String COMMAND_HELP = "/help";
 
     //text
 
@@ -17,5 +16,5 @@ public class TelegramBotCommon {
 
     //regex
 
-    public static final String REGEX_PHONE_NUMBER = "\\d{3}";
+    public static final String REGEX_PHONE_NUMBER = "^[\\+]?[(]?[0-9]{3}[)]?[-\\s\\.]?[0-9]{3}[-\\s\\.]?[0-9]{4,6}$";
 }

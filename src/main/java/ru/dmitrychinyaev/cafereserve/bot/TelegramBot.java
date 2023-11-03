@@ -8,7 +8,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.dmitrychinyaev.cafereserve.configuration.TelegramBotConfiguration;
-import ru.dmitrychinyaev.cafereserve.entity.ReservationRequest;
 import ru.dmitrychinyaev.cafereserve.entity.TelegramBotCommon;
 import ru.dmitrychinyaev.cafereserve.service.TelegramBotService;
 import ru.dmitrychinyaev.cafereserve.service.TelegramBotServiceKeyboard;
@@ -44,6 +43,14 @@ public class TelegramBot extends TelegramLongPollingBot {
                 } catch (TelegramApiException e) {
                     throw new RuntimeException(e);
                 }
+            } else if(Pattern.matches(TelegramBotCommon.REGEX_PHONE_NUMBER, messageText)){
+                if(username == null || username.equals("")){
+                    username = update.getMessage().getChat().getUserName();
+                }
+                telegramBotService.setNamePhoneToRequest(makeRequestID(update),messageText, username);
+                sendMessage(update.getMessage().getChatId(), "good!");
+                sendMessage(update.getMessage().getChatId(),telegramBotService.findRequest(makeRequestID(update)).successBooking());
+                telegramBotService.putRequest(makeRequestID(update), update.getMessage().getChat().getUserName());
             }
         } else if (update.hasCallbackQuery()) {
             String callbackData = update.getCallbackQuery().getData();
@@ -67,17 +74,6 @@ public class TelegramBot extends TelegramLongPollingBot {
             if(Pattern.matches("\\d{2}:00", callbackData)){
                 telegramBotService.setTimeToRequest(makeRequestID(update),callbackData);
                 sendMessage(update.getCallbackQuery().getMessage().getChatId(), TelegramBotCommon.TEXT_ASK_PHONE_NUMBER);
-            }
-            //TODO это надо вынести в switch выше. У номера нет callback
-            if(Pattern.matches("\\d{4}", callbackData)){
-                String name = update.getCallbackQuery().getMessage().getChat().getFirstName();
-                if(name == null || name.equals("")){
-                    name = update.getCallbackQuery().getMessage().getChat().getUserName();
-                }
-                telegramBotService.setNamePhoneToRequest(makeRequestID(update),callbackData, name);
-                sendMessage(update.getCallbackQuery().getMessage().getChatId(), "good!");
-                sendMessage(update.getCallbackQuery().getMessage().getChatId(),makeFinalPhrase(telegramBotService.findRequest(makeRequestID(update))));
-                telegramBotService.putRequest(makeRequestID(update), update.getCallbackQuery().getMessage().getChat().getUserName());
             }
         }
     }
@@ -107,10 +103,13 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     private String makeRequestID(Update update){
         DateTime dateTime = new DateTime();
-        return update.getCallbackQuery().getMessage().getChat().getUserName() + dateTime.toString("dd.MM");
+        String username;
+        try {
+            username = update.getCallbackQuery().getMessage().getChat().getUserName();
+        } catch (NullPointerException e){
+            username = update.getMessage().getChat().getUserName();
+        }
+        return username + dateTime.toString("dd.MM");
     }
 
-    private String makeFinalPhrase(ReservationRequest request){
-        return "Бронь на" + request.getName() + " на " + request.getDate() + " в " + request.getTime() + "создана";
-    }
 }

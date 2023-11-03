@@ -53,6 +53,7 @@ public class Tables2PersonsRepository {
         int openingTime = 12;
         for (int i = 0; i <11; i++) {
             times.add(i,openingTime + ":00");
+            openingTime++;
         }
         return times.indexOf(time);
     }
@@ -72,6 +73,11 @@ public class Tables2PersonsRepository {
     public void putBooking(ReservationRequest requestToPut) {
         int date = dateConvertToElement(requestToPut.getDate());
         int time = timeConvertToElement(requestToPut.getTime());
-        arrayTime.get(date).get(time).add(requestToPut);
+        try {
+            arrayTime.get(date).get(time).add(requestToPut);
+        } catch (NullPointerException e) {
+            arrayTime.get(date).add(time, new LinkedList<>());
+            arrayTime.get(date).get(time).add(requestToPut);
+        }
     }
 }
