@@ -2,7 +2,6 @@ package ru.dmitrychinyaev.cafereserve.bot;
 
 import org.joda.time.DateTime;
 import org.joda.time.Days;
-import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.junit.jupiter.api.Assertions;
@@ -67,5 +66,23 @@ public class TelegramBotTest {
         assertEquals(dates.size(), 8);
         assertEquals("27", dates.get(0));
         assertEquals(0, dates.indexOf("27"));
+    }
+
+    @Test
+    void timeConvertToElement(){
+        int expected = 3;
+        int result = 0;
+
+        String time = "15:00";
+        int openingTime = 12;
+        for (int i = 0; i <11; i++) {
+            if(time.equals(openingTime + ":00")){
+                result = i;
+                break;
+            }
+            openingTime++;
+        }
+
+        assertEquals(3, result);
     }
 }

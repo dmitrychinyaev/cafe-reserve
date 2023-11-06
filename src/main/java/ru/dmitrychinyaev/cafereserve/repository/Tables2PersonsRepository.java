@@ -49,13 +49,16 @@ public class Tables2PersonsRepository {
     }
 
     public int timeConvertToElement(String time){
-        List<String> times = new ArrayList<>();
+        int index = 0;
         int openingTime = 12;
         for (int i = 0; i <11; i++) {
-            times.add(i,openingTime + ":00");
+            if(time.equals(openingTime + ":00")){
+               index = i;
+               break;
+            }
             openingTime++;
         }
-        return times.indexOf(time);
+        return index;
     }
     
     public void initiateFirstArray(){
