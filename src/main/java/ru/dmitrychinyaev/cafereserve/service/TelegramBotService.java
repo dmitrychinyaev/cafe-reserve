@@ -20,7 +20,7 @@ public class TelegramBotService {
     public void setPersonsToRequest(String requestID, String persons){
         requestRepository.setPersons(requestID, persons);
     }
-
+    //TODO Добавить в метод, который будет сравнивать дату с датой, кот добавил админ когда не раб кафе + создать реп сюда с добавлением и удалением даты
     public ArrayList<String> findAvailableTime(String requestID) {
         ArrayList<String> availableTime = new ArrayList<>();
         Optional<ReservationRequest> requestToFind = Optional.ofNullable(requestRepository.getRequest(requestID));

@@ -30,12 +30,14 @@ public class TelegramBot extends TelegramLongPollingBot {
     public String getBotToken() {
         return telegramBotConfiguration.getToken();
     }
+    //TODO описать как админ добавляет и удаляет даты не работающего кафе. И показывает список всех гостей на число
     @Override
     public void onUpdateReceived(Update update) {
         if (update.hasMessage() && update.getMessage().hasText()) {
             String messageText = update.getMessage().getText();
             long chatId = update.getMessage().getChatId();
             String username = update.getMessage().getChat().getFirstName();
+
             if (messageText.equals(TelegramBotCommon.COMMAND_START)) {
                 sendMessage(chatId, String.format(TelegramBotCommon.TEXT_GREETING, username));
                 try {
@@ -51,10 +53,13 @@ public class TelegramBot extends TelegramLongPollingBot {
                 sendMessage(update.getMessage().getChatId(), "good!");
                 sendMessage(update.getMessage().getChatId(),telegramBotService.findRequest(makeRequestID(update)).successBooking());
                 telegramBotService.putRequest(makeRequestID(update), update.getMessage().getChat().getUserName());
+            } else {
+                //TODO Написать если ошибочный текст
             }
         } else if (update.hasCallbackQuery()) {
             String callbackData = update.getCallbackQuery().getData();
             if (Pattern.matches("\\d{2}", callbackData)){
+                //TODO вынести в отдельные методы с проверкой, если кто-то уже ввел время и время стоит в запросе -> вернуть ошибку
                 telegramBotService.createRequest(makeRequestID(update), callbackData);
                 try {
                     askPersons(update.getCallbackQuery().getMessage().getChatId());
@@ -62,6 +67,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                     throw new RuntimeException(e);
                 }
             }
+            //TODO Записать константы
             if (Pattern.matches("\\d", callbackData)){
                 telegramBotService.setPersonsToRequest(makeRequestID(update),callbackData);
                 ArrayList<String> availableTime = telegramBotService.findAvailableTime(makeRequestID(update));

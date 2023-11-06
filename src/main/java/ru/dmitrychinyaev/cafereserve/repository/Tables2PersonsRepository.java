@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 @Repository
 public class Tables2PersonsRepository {
+    //TODO Придумать метод с аннотацией Hourly для удаления просроченной ячейки
     private final List<ArrayList<LinkedList<ReservationRequest>>> arrayTime = new ArrayList<ArrayList<LinkedList<ReservationRequest>>>(8);
 
     public ArrayList<String> availableTime (ReservationRequest request){
@@ -72,7 +73,7 @@ public class Tables2PersonsRepository {
             requestLinkedList.add(null);
         }
     }
-
+    //TODO Написать класс CSV файл для backup и отправляет его на почту
     public void putBooking(ReservationRequest requestToPut) {
         int date = dateConvertToElement(requestToPut.getDate());
         int time = timeConvertToElement(requestToPut.getTime());

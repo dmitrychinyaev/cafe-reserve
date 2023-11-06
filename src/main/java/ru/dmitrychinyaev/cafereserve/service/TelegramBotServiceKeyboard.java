@@ -90,7 +90,7 @@ public class TelegramBotServiceKeyboard {
         rowsInLine.add(rowInLine2);
 
         List<InlineKeyboardButton> rowInLine3 = new ArrayList<>();
-        if (availableTime.size() > 12) {
+        if (availableTime.size() > 8) {
             for (int k = 8; k < availableTime.size(); k++) {
                 var button3 = new InlineKeyboardButton();
                 String time3 = availableTime.get(k);
