@@ -1,6 +1,7 @@
 package ru.dmitrychinyaev.cafereserve.repository;
 
 import org.joda.time.DateTime;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
 import ru.dmitrychinyaev.cafereserve.entity.ReservationRequest;
 
@@ -9,9 +10,21 @@ import java.util.LinkedList;
 import java.util.List;
 @Repository
 public class Tables2PersonsRepository {
-    //TODO Придумать метод с аннотацией Hourly для удаления просроченной ячейки
     private final List<ArrayList<LinkedList<ReservationRequest>>> arrayTime = new ArrayList<ArrayList<LinkedList<ReservationRequest>>>(8);
-
+    private DateTime currentDate;
+    @Scheduled(cron = "@hourly")
+    private void checkDate(){
+        if(currentDate==null){
+            currentDate = new DateTime();
+            return;
+        }
+        DateTime dateTime = new DateTime();
+        if(!dateTime.equals(currentDate)){
+           currentDate = dateTime;
+           arrayTime.remove(0);
+           arrayTime.add(null);
+        }
+    }
     public ArrayList<String> availableTime (ReservationRequest request){
         int requestedDate = dateConvertToElement(request.getDate());
 
@@ -38,15 +51,16 @@ public class Tables2PersonsRepository {
     }
 
     public int dateConvertToElement(String date){
-        List<String> dates = new ArrayList<>();
-        DateTime dateTime = new DateTime();
-        dates.add(0,dateTime.toString("dd"));
-        for (int i = 1; i < 8; i++) {
-            dates.add(i,dateTime
-                    .plusDays(i)
-                    .toString("dd"));
+        int index = 0;
+        String dateToCompare = new DateTime().toString("dd");
+        for (int i = 0; i < 8; i++) {
+            if(date.equals(dateToCompare)){
+                index = i;
+                break;
+            }
+            index++;
         }
-        return dates.indexOf(date);
+        return index;
     }
 
     public int timeConvertToElement(String time){
