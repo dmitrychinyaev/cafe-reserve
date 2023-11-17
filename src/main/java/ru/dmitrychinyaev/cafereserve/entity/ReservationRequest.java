@@ -7,6 +7,7 @@ import org.joda.time.DateTime;
 @Data
 @NoArgsConstructor
 public class ReservationRequest {
+
     private String name;
     private String date;
     private String persons;

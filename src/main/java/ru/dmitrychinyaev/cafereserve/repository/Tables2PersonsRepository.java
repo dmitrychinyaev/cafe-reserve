@@ -40,10 +40,9 @@ public class Tables2PersonsRepository {
         ArrayList<LinkedList<ReservationRequest>> availableSlots = arrayTime.get(requestedDate);
         ArrayList<String> availableTime = new ArrayList<>(11);
         int time = 12;
-        for (int i = 0; i < availableSlots.size(); i++) {
-            LinkedList<ReservationRequest> requestLinkedList = availableSlots.get(i);
+        for (LinkedList<ReservationRequest> requestLinkedList : availableSlots) {
             if (requestLinkedList == null || requestLinkedList.size() < 3) {
-                availableTime.add(time +":00");
+                availableTime.add(time + ":00");
             }
             time++;
         }
@@ -51,16 +50,9 @@ public class Tables2PersonsRepository {
     }
 
     public int dateConvertToElement(String date){
-        int index = 0;
-        String dateToCompare = new DateTime().toString("dd");
-        for (int i = 0; i < 8; i++) {
-            if(date.equals(dateToCompare)){
-                index = i;
-                break;
-            }
-            index++;
-        }
-        return index;
+        int dateInt = Integer.parseInt(date);
+        int dateToCompare = Integer.parseInt(new DateTime().toString("dd"));
+        return dateInt - dateToCompare;
     }
 
     public int timeConvertToElement(String time){

@@ -19,7 +19,7 @@
 		<starter-web.version>2.7.11</starter-web.version>
 		<configuration-processor.version>2.7.11</configuration-processor.version>
 		<telegrambots-starter.version>6.5.0</telegrambots-starter.version>
-		<lombok.version>1.18.24</lombok.version>
+		<lombok.version>1.18.30</lombok.version>
 	</properties>
 	<dependencies>
 		<dependency>
