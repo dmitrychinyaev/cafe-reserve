@@ -3,6 +3,7 @@ package ru.dmitrychinyaev.cafereserve.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.dmitrychinyaev.cafereserve.entity.ReservationRequest;
+import ru.dmitrychinyaev.cafereserve.repository.BadDaysRepository;
 import ru.dmitrychinyaev.cafereserve.repository.RequestRepository;
 import ru.dmitrychinyaev.cafereserve.repository.Tables2PersonsRepository;
 
@@ -14,6 +15,7 @@ import java.util.Optional;
 public class TelegramBotService {
     private final RequestRepository requestRepository;
     private final Tables2PersonsRepository tables2PersonsRepository;
+    private final BadDaysRepository badDaysRepository;
 
     public void createRequest(String requestName, String date){
         requestRepository.addRequest(requestName, new ReservationRequest(date));
@@ -52,5 +54,9 @@ public class TelegramBotService {
         String keyUpdate = username + requestToPut.getDate();
         requestRepository.changeKey(keyUpdate, makeRequestID);
         tables2PersonsRepository.putBooking(requestToPut);
+    }
+
+    public boolean checkTheDate(String callbackData) {
+        return badDaysRepository.ifExist(callbackData);
     }
 }

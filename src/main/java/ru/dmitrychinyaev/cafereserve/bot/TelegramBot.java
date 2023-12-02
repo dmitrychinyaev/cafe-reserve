@@ -58,7 +58,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             }
         } else if (update.hasCallbackQuery()) {
             String callbackData = update.getCallbackQuery().getData();
-            if (Pattern.matches("\\d{2}", callbackData)){
+            if (Pattern.matches(TelegramBotCommon.REGEX_DATE, callbackData)){
                 //TODO вынести в отдельные методы с проверкой, если кто-то уже ввел время и время стоит в запросе -> вернуть ошибку
                 telegramBotService.createRequest(makeRequestID(update), callbackData);
                 try {
@@ -68,14 +68,19 @@ public class TelegramBot extends TelegramLongPollingBot {
                 }
             }
             //TODO Записать константы
-            if (Pattern.matches("\\d", callbackData)){
-                telegramBotService.setPersonsToRequest(makeRequestID(update),callbackData);
-                ArrayList<String> availableTime = telegramBotService.findAvailableTime(makeRequestID(update));
-                try {
-                    askTime(update.getCallbackQuery().getMessage().getChatId(), availableTime);
-                } catch (TelegramApiException e) {
-                    throw new RuntimeException(e);
+            try {
+                if (Pattern.matches("\\d", callbackData)) {
+                    if (telegramBotService.checkTheDate(callbackData)) {
+                        telegramBotService.setPersonsToRequest(makeRequestID(update), callbackData);
+                        ArrayList<String> availableTime = telegramBotService.findAvailableTime(makeRequestID(update));
+                        askTime(update.getCallbackQuery().getMessage().getChatId(), availableTime);
+                    } else {
+                        sendMessage(update.getCallbackQuery().getMessage().getChatId(), TelegramBotCommon.TEXT_BAD_DATE);
+                        askDate(update.getCallbackQuery().getMessage().getChatId());
+                    }
                 }
+            } catch (TelegramApiException e) {
+                throw new RuntimeException(e);
             }
             if(Pattern.matches("\\d{2}:00", callbackData)){
                 telegramBotService.setTimeToRequest(makeRequestID(update),callbackData);
