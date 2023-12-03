@@ -50,15 +50,14 @@ public class TelegramBot extends TelegramLongPollingBot {
                     username = update.getMessage().getChat().getUserName();
                 }
                 telegramBotService.setNamePhoneToRequest(makeRequestID(update),messageText, username);
-                sendMessage(update.getMessage().getChatId(), "good!");
-                sendMessage(update.getMessage().getChatId(),telegramBotService.findRequest(makeRequestID(update)).successBooking());
                 telegramBotService.putRequest(makeRequestID(update), update.getMessage().getChat().getUserName());
+                sendMessage(update.getMessage().getChatId(),telegramBotService.findRequest(makeRequestID(update)).successBooking());
             } else {
                 //TODO Написать если ошибочный текст
             }
         } else if (update.hasCallbackQuery()) {
             String callbackData = update.getCallbackQuery().getData();
-            if (Pattern.matches(TelegramBotCommon.REGEX_DATE, callbackData)){
+            if (Pattern.matches(TelegramBotCommon.REGEX_ASK_DATE, callbackData)){
                 //TODO вынести в отдельные методы с проверкой, если кто-то уже ввел время и время стоит в запросе -> вернуть ошибку
                 telegramBotService.createRequest(makeRequestID(update), callbackData);
                 try {
@@ -67,9 +66,8 @@ public class TelegramBot extends TelegramLongPollingBot {
                     throw new RuntimeException(e);
                 }
             }
-            //TODO Записать константы
             try {
-                if (Pattern.matches("\\d", callbackData)) {
+                if (Pattern.matches(TelegramBotCommon.REGEX_ASK_PEOPLE, callbackData)) {
                     if (telegramBotService.checkTheDate(callbackData)) {
                         telegramBotService.setPersonsToRequest(makeRequestID(update), callbackData);
                         ArrayList<String> availableTime = telegramBotService.findAvailableTime(makeRequestID(update));
@@ -82,7 +80,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             } catch (TelegramApiException e) {
                 throw new RuntimeException(e);
             }
-            if(Pattern.matches("\\d{2}:00", callbackData)){
+            if(Pattern.matches(TelegramBotCommon.REGEX_ASK_TIME, callbackData)){
                 telegramBotService.setTimeToRequest(makeRequestID(update),callbackData);
                 sendMessage(update.getCallbackQuery().getMessage().getChatId(), TelegramBotCommon.TEXT_ASK_PHONE_NUMBER);
             }
@@ -120,7 +118,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         } catch (NullPointerException e){
             username = update.getMessage().getChat().getUserName();
         }
-        return username + dateTime.toString("dd.MM");
+        return username + dateTime.toString(TelegramBotCommon.REGEX_DAY_MONTH);
     }
 
 }

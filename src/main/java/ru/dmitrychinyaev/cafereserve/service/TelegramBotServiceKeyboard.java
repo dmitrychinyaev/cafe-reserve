@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import ru.dmitrychinyaev.cafereserve.entity.TelegramBotCommon;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +15,7 @@ public class TelegramBotServiceKeyboard {
     public SendMessage dateKeyboard(long chatId) {
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
-        message.setText("On what date do you want to book a table?");
+        message.setText(TelegramBotCommon.TEXT_ASK_DATE);
 
         InlineKeyboardMarkup markupInLine = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
@@ -25,7 +26,7 @@ public class TelegramBotServiceKeyboard {
             var button = new InlineKeyboardButton();
             String date = dateTime
                     .plusDays(i)
-                    .toString("dd");
+                    .toString(TelegramBotCommon.REGEX_DAY);
             button.setText(date);
             button.setCallbackData(date);
             rowInLine.add(button);
@@ -40,7 +41,7 @@ public class TelegramBotServiceKeyboard {
     public SendMessage personsKeyboard(long chatId) {
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
-        message.setText("How many people?");
+        message.setText(TelegramBotCommon.REGEX_ASK_PEOPLE);
 
         InlineKeyboardMarkup markupInLine = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
@@ -62,7 +63,7 @@ public class TelegramBotServiceKeyboard {
     public SendMessage timeKeyboard(long chatId, ArrayList<String> availableTime) {
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
-        message.setText("What time?");
+        message.setText(TelegramBotCommon.TEXT_ASK_TIME);
 
         InlineKeyboardMarkup markupInLine = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
