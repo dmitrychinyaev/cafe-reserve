@@ -6,6 +6,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import ru.dmitrychinyaev.cafereserve.entity.ReservationRequest;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -85,4 +86,24 @@ public class TelegramBotTest {
 
         assertEquals(3, result);
     }
+
+    @Test
+    void checkIfRequestExist() {
+        Map<String, ReservationRequest> requestRepository = new HashMap<>();
+        checkTheKey("qwerty", requestRepository);
+        checkTheKey("qwerty1", requestRepository);
+        checkTheKey("qwerty", requestRepository);
+
+        assertEquals(1,requestRepository.size());
+    }
+
+    public static void checkTheKey(String example, Map<String, ReservationRequest> requestRepository) {
+        if (!requestRepository.containsKey(example)) {
+            requestRepository.put(example, new ReservationRequest("12"));
+        } else {
+            requestRepository.remove(example);
+        }
+    }
+
 }
+

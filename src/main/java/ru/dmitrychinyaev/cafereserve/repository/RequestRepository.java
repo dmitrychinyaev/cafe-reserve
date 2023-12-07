@@ -8,36 +8,46 @@ import java.util.Map;
 
 @Repository
 public class RequestRepository {
-    private final Map<String, ReservationRequest> repository = new HashMap<>();
+    private final Map<String, ReservationRequest> requestRepository = new HashMap<>();
 
     public ReservationRequest getRequest(String requestID){
-        return repository.get(requestID);
+        return requestRepository.get(requestID);
     }
 
-    public void addRequest(String requestId, ReservationRequest reservationRequest){
-        repository.put(requestId,reservationRequest);
+    public boolean addRequest(String requestId, ReservationRequest reservationRequest){
+        if (!requestRepository.containsKey(requestId)) {
+            requestRepository.put(requestId,reservationRequest);
+            return true;
+        } else {
+            requestRepository.remove(requestId);
+            return false;
+        }
     }
 
-    public void setPersons(String requestID, String personsNumber){
-        ReservationRequest requestToChange = repository.get(requestID);
-        requestToChange.setPersons(personsNumber);
-        repository.replace(requestID, requestToChange);
+    public boolean setPersons(String requestID, String personsNumber) {
+        ReservationRequest requestToChange = requestRepository.get(requestID);
+        if (!requestToChange.getPersons().isEmpty()) {
+            requestToChange.setPersons(personsNumber);
+            requestRepository.replace(requestID, requestToChange);
+            return true;
+        }
+        return false;
     }
 
     public void setTime(String requestID, String time) {
-        ReservationRequest requestToChange = repository.get(requestID);
+        ReservationRequest requestToChange = requestRepository.get(requestID);
         requestToChange.setTime(time);
-        repository.replace(requestID, requestToChange);
+        requestRepository.replace(requestID, requestToChange);
     }
 
     public void setNameAndPhone(String requestID, String phoneNumber, String name) {
-        ReservationRequest requestToChange = repository.get(requestID);
+        ReservationRequest requestToChange = requestRepository.get(requestID);
         requestToChange.setPhoneNumber(phoneNumber);
         requestToChange.setName(name);
-        repository.replace(requestID, requestToChange);
+        requestRepository.replace(requestID, requestToChange);
     }
 
     public void changeKey(String keyUpdate, String requestID) {
-        repository.put(keyUpdate, repository.remove(requestID));
+        requestRepository.put(keyUpdate, requestRepository.remove(requestID));
     }
 }

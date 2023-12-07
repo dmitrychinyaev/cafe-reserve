@@ -11,7 +11,7 @@ import java.util.List;
 public class BadDaysRepository {
     private final List<String> closedCafeDays = new LinkedList<>();
     public boolean ifExist(String date){
-        return closedCafeDays.contains(date);
+        return !closedCafeDays.contains(date);
     }
 
     public void putDayClosing(String date){

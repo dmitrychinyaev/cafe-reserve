@@ -12,16 +12,16 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class TelegramBotService {
+public class BotService {
     private final RequestRepository requestRepository;
     private final Tables2PersonsRepository tables2PersonsRepository;
     private final BadDaysRepository badDaysRepository;
 
-    public void createRequest(String requestName, String date){
-        requestRepository.addRequest(requestName, new ReservationRequest(date));
+    public boolean createRequest(String requestName, String date){
+        return requestRepository.addRequest(requestName, new ReservationRequest(date));
     }
-    public void setPersonsToRequest(String requestID, String persons){
-        requestRepository.setPersons(requestID, persons);
+    public boolean setPersonsToRequest(String requestID, String persons){
+        return requestRepository.setPersons(requestID, persons);
     }
     //TODO Добавить в метод, который будет сравнивать дату с датой, кот добавил админ когда не раб кафе + создать реп сюда с добавлением и удалением даты
     public ArrayList<String> findAvailableTime(String requestID) {
@@ -49,11 +49,12 @@ public class TelegramBotService {
         return requestRepository.getRequest(requestID);
     }
 
-    public void putRequest(String makeRequestID, String username) {
+    public boolean putRequest(String makeRequestID, String username) {
         ReservationRequest requestToPut = requestRepository.getRequest(makeRequestID);
         String keyUpdate = username + requestToPut.getDate();
         requestRepository.changeKey(keyUpdate, makeRequestID);
         tables2PersonsRepository.putBooking(requestToPut);
+        return true;
     }
 
     public boolean checkTheDate(String callbackData) {
