@@ -37,12 +37,12 @@ public class BotService {
         return availableTime;
     }
 
-    public void setTimeToRequest(String requestID, String time) {
-        requestRepository.setTime(requestID,time);
+    public boolean setTimeToRequest(String requestID, String time) {
+        return requestRepository.setTime(requestID,time);
     }
 
-    public void setNamePhoneToRequest(String requestID, String phoneNumber, String name) {
-        requestRepository.setNameAndPhone(requestID,phoneNumber,name);
+    public boolean setNamePhoneToRequest(String requestID, String phoneNumber, String name) {
+        return requestRepository.setNameAndPhone(requestID,phoneNumber,name);
     }
 
     public ReservationRequest findRequest(String requestID) {

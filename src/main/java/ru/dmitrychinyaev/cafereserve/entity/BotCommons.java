@@ -17,7 +17,7 @@ public class BotCommons {
     public static final String TEXT_GREETING = "Здравствуйте, %s!";
     public static final String TEXT_TRY_AGAIN = "Неправильный запрос. Попробуйте еще раз";
     public static final String TEXT_SUCCESS_BOOKING = "Вы успешно забронировали!";
-    public static final String TEXT_SOMETHING_WRONG = "Что-то пошло не так. Попробуйте начать заново.";
+    public static final String TEXT_SOMETHING_WRONG = "Что-то пошло не так. Попробуйте начать заново. Нажмите команду /start";
 
     //regex
     public static final String REGEX_PHONE_NUMBER = "^[\\+]?[(]?[0-9]{3}[)]?[-\\s\\.]?[0-9]{3}[-\\s\\.]?[0-9]{4,6}$";

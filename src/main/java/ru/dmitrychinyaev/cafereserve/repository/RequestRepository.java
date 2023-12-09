@@ -26,26 +26,50 @@ public class RequestRepository {
 
     public boolean setPersons(String requestID, String personsNumber) {
         ReservationRequest requestToChange = requestRepository.get(requestID);
-        if (!requestToChange.getPersons().isEmpty()) {
+        if(requestToChange == null){
+            return false;
+        }
+        if (requestToChange.getPersons() == null) {
             requestToChange.setPersons(personsNumber);
             requestRepository.replace(requestID, requestToChange);
             return true;
+        } else {
+            requestRepository.remove(requestID);
+            return false;
         }
-        return false;
     }
 
-    public void setTime(String requestID, String time) {
+    public boolean setTime(String requestID, String time) {
         ReservationRequest requestToChange = requestRepository.get(requestID);
-        requestToChange.setTime(time);
-        requestRepository.replace(requestID, requestToChange);
+        if(requestToChange == null){
+            return false;
+        }
+        if (requestToChange.getTime() == null) {
+            requestToChange.setTime(time);
+            requestRepository.replace(requestID, requestToChange);
+            return true;
+        } else {
+            requestRepository.remove(requestID);
+            return false;
+        }
     }
 
-    public void setNameAndPhone(String requestID, String phoneNumber, String name) {
+    public boolean setNameAndPhone(String requestID, String phoneNumber, String name) {
         ReservationRequest requestToChange = requestRepository.get(requestID);
-        requestToChange.setPhoneNumber(phoneNumber);
-        requestToChange.setName(name);
-        requestRepository.replace(requestID, requestToChange);
+        if (requestToChange == null) {
+            return false;
+        }
+        if (requestToChange.getPhoneNumber() == null) {
+            requestToChange.setPhoneNumber(phoneNumber);
+            requestToChange.setName(name);
+            requestRepository.replace(requestID, requestToChange);
+            return true;
+        } else {
+            requestRepository.remove(requestID);
+            return false;
+        }
     }
+
 
     public void changeKey(String keyUpdate, String requestID) {
         requestRepository.put(keyUpdate, requestRepository.remove(requestID));
