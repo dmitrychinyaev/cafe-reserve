@@ -1,16 +1,22 @@
 package ru.dmitrychinyaev.cafereserve.repository;
 
+import lombok.RequiredArgsConstructor;
 import org.joda.time.DateTime;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
 import ru.dmitrychinyaev.cafereserve.entity.ReservationRequest;
+import ru.dmitrychinyaev.cafereserve.utils.CSVUtils;
+import ru.dmitrychinyaev.cafereserve.utils.MailSender;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 @Repository
+@RequiredArgsConstructor
 public class Tables2PersonsRepository {
     private final List<ArrayList<LinkedList<ReservationRequest>>> arrayTime = new ArrayList<ArrayList<LinkedList<ReservationRequest>>>(8);
+    private final CSVUtils csvUtils;
+    private final MailSender mailSender;
     private DateTime currentDate;
     @Scheduled(cron = "@hourly")
     private void checkDate(){
@@ -79,7 +85,7 @@ public class Tables2PersonsRepository {
             requestLinkedList.add(null);
         }
     }
-    //TODO Написать класс CSV файл для backup и отправляет его на почту
+
     public void putBooking(ReservationRequest requestToPut) {
         int date = dateConvertToElement(requestToPut.getDate());
         int time = timeConvertToElement(requestToPut.getTime());
@@ -89,5 +95,7 @@ public class Tables2PersonsRepository {
             arrayTime.get(date).add(time, new LinkedList<>());
             arrayTime.get(date).get(time).add(requestToPut);
         }
+        csvUtils.write(requestToPut);
+        mailSender.send(requestToPut.successBooking());
     }
 }
