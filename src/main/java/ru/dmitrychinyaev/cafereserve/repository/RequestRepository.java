@@ -74,4 +74,8 @@ public class RequestRepository {
     public void changeKey(String keyUpdate, String requestID) {
         requestRepository.put(keyUpdate, requestRepository.remove(requestID));
     }
+
+    public void removeRequest(String request) {
+        requestRepository.remove(request);
+    }
 }

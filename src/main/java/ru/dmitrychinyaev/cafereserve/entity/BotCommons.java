@@ -16,10 +16,11 @@ public class BotCommons {
     public static final String TEXT_BAD_DATE = "К сожалению, в эту дату кафе не работает. Попробуйте выбрать другую";
     public static final String TEXT_GREETING = "Здравствуйте, %s!";
     public static final String TEXT_TRY_AGAIN = "Неправильный запрос. Попробуйте еще раз";
-    public static final String TEXT_SUCCESS_BOOKING = "Вы успешно забронировали!";
+    public static final String TEXT_SUCCESSFUL_BOOKING = "Вы успешно забронировали!";
     public static final String TEXT_SOMETHING_WRONG = "Что-то пошло не так. Попробуйте начать заново. Нажмите команду /start";
     public static final String TEXT_SUBJECT_EMAIL = "Новое бронирование";
     public static final String TEXT_WAIT_FOR_CONFIRMATION = "Подождите ответа от администратора";
+    public static final String TEXT_UNSUCCESSFUL_BOOKING = "К сожалению, на данное время нет свободных столов.";
 
     //regex
     public static final String REGEX_PHONE_NUMBER = "^[\\+]?[(]?[0-9]{3}[)]?[-\\s\\.]?[0-9]{3}[-\\s\\.]?[0-9]{4,6}$";

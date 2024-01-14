@@ -67,6 +67,12 @@ public class TelegramBot extends TelegramLongPollingBot {
                     processThePersonsFromCallback(callbackData, update);
                 } else if (Pattern.matches(BotCommons.REGEX_ASK_TIME, callbackData)) {
                     processTheTimeFromCallback(callbackData, update);
+                } else if (Pattern.matches("pos\\d+", callbackData) && update.getCallbackQuery().getMessage().getChatId()==942625769L) {
+                    Long chatIDExtracted = extractChatID(callbackData);
+                    sendMessage(chatIDExtracted, BotCommons.TEXT_SUCCESSFUL_BOOKING);
+                } else if (Pattern.matches("neg\\d+", callbackData) && update.getCallbackQuery().getMessage().getChatId()==942625769L) {
+                    Long chatIDExtracted = extractChatID(callbackData);
+                    sendMessage(chatIDExtracted, BotCommons.TEXT_UNSUCCESSFUL_BOOKING);
                 }
             } catch (TelegramApiException e) {
                 throw new RuntimeException(e);
@@ -152,8 +158,13 @@ public class TelegramBot extends TelegramLongPollingBot {
         if(botService.setNamePhoneToRequest(makeRequestID(update), phoneNumber, username)) {
             sendMessage(chatId, BotCommons.TEXT_WAIT_FOR_CONFIRMATION);
             sendRequestToAdmin(botService.findRequest(makeRequestID(update)));
+            botService.removeRequest(makeRequestID(update));
         }else {
             sendMessage(chatId, BotCommons.TEXT_SOMETHING_WRONG);
         }
+    }
+
+    private Long extractChatID(String callback){
+        return Long.valueOf(callback.substring(3));
     }
 }

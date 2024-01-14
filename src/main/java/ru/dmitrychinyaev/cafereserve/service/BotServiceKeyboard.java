@@ -14,7 +14,7 @@ import java.util.List;
 
 @Service
 public class BotServiceKeyboard {
-    private Long adminID = 251878937L;
+    private Long adminID = 942625769L;
     public SendMessage dateKeyboard(long chatId) {
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
@@ -73,6 +73,9 @@ public class BotServiceKeyboard {
 
         List<InlineKeyboardButton> rowInLine1 = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
+            if(i>=availableTime.size()){
+                continue;
+            }
             var button1 = new InlineKeyboardButton();
             String time1 = availableTime.get(i);
             button1.setText(time1);
@@ -84,6 +87,9 @@ public class BotServiceKeyboard {
         List<InlineKeyboardButton> rowInLine2 = new ArrayList<>();
         if (availableTime.size() > 4) {
             for (int j = 4; j < 8; j++) {
+                if(j>=availableTime.size()){
+                    continue;
+                }
                 var button2 = new InlineKeyboardButton();
                 String time2 = availableTime.get(j);
                 button2.setText(time2);

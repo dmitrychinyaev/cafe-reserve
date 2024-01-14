@@ -79,11 +79,17 @@ public class BotService {
         int time = Integer.parseInt(dateTime.toString("HH"));
         if (!(date.equals(dateToCompare) && time > 12)) {
             time = 12;
+        } else {
+            time++;
         }
         for (int i = time; i < 22; i++) {
             availableTime.add(time + ":00");
             time++;
         }
         return availableTime;
+    }
+
+    public void removeRequest(String request) {
+        requestRepository.removeRequest(request);
     }
 }
