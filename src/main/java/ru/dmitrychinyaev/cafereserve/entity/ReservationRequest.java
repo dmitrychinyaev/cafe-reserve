@@ -13,9 +13,14 @@ public class ReservationRequest {
     private String persons;
     private String time;
     private String phoneNumber;
+    private Long chatID;
 
     public ReservationRequest(String date) {
         this.date = date;
+    }
+    public ReservationRequest(String date, Long chatID) {
+        this.date = date;
+        this.chatID = chatID;
     }
     //TODO сделать проверку даты. Если число 01, а выбор даты произошел в конце месяца, то месяц будет тот же а не след
 

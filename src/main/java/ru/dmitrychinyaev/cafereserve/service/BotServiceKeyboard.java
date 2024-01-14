@@ -6,12 +6,15 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import ru.dmitrychinyaev.cafereserve.entity.BotCommons;
+import ru.dmitrychinyaev.cafereserve.entity.ReservationRequest;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
 public class BotServiceKeyboard {
+    private Long adminID = 251878937L;
     public SendMessage dateKeyboard(long chatId) {
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
@@ -102,6 +105,32 @@ public class BotServiceKeyboard {
         }
         rowsInLine.add(rowInLine3);
 
+        markupInLine.setKeyboard(rowsInLine);
+        message.setReplyMarkup(markupInLine);
+        return message;
+    }
+
+    public SendMessage requestToAdmin(ReservationRequest reservationRequest) {
+        SendMessage message = new SendMessage();
+        message.setChatId(adminID);
+        message.setText(Arrays.toString(reservationRequest.getArrayOfData()));
+
+        InlineKeyboardMarkup markupInLine = new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
+        List<InlineKeyboardButton> rowInLine = new ArrayList<>();
+
+
+        var buttonYes = new InlineKeyboardButton();
+        buttonYes.setText("Да");
+        buttonYes.setCallbackData("pos" + reservationRequest.getChatID());
+        rowInLine.add(buttonYes);
+
+        var buttonNo = new InlineKeyboardButton();
+        buttonNo.setText("Нет");
+        buttonNo.setCallbackData("neg" + reservationRequest.getChatID());
+        rowInLine.add(buttonNo);
+
+        rowsInLine.add(rowInLine);
         markupInLine.setKeyboard(rowsInLine);
         message.setReplyMarkup(markupInLine);
         return message;

@@ -9,6 +9,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.dmitrychinyaev.cafereserve.configuration.TelegramBotConfiguration;
 import ru.dmitrychinyaev.cafereserve.entity.BotCommons;
+import ru.dmitrychinyaev.cafereserve.entity.ReservationRequest;
 import ru.dmitrychinyaev.cafereserve.service.BotService;
 import ru.dmitrychinyaev.cafereserve.service.BotServiceKeyboard;
 
@@ -46,7 +47,13 @@ public class TelegramBot extends TelegramLongPollingBot {
                     throw new RuntimeException(e);
                 }
             } else if (Pattern.matches(BotCommons.REGEX_PHONE_NUMBER, messageText)) {
-                processThePhoneNumberFromCallback(chatId, update, messageText, username);
+                try {
+                    processThePhoneNumberFromCallback(chatId, update, messageText, username);
+                } catch (TelegramApiException e) {
+                    throw new RuntimeException(e);
+                }
+            } else if (Pattern.matches("showID", messageText)) {
+                sendMessage(chatId, String.valueOf(chatId));
             } else {
                 sendMessage(chatId, BotCommons.TEXT_TRY_AGAIN);
             }
@@ -89,6 +96,9 @@ public class TelegramBot extends TelegramLongPollingBot {
     private void askTime(long chatId, ArrayList<String> availableTime) throws TelegramApiException {
         execute(botServiceKeyboard.timeKeyboard(chatId, availableTime));
     }
+    private void sendRequestToAdmin(ReservationRequest request) throws TelegramApiException {
+        execute(botServiceKeyboard.requestToAdmin(request));
+    }
 
     private String makeRequestID(Update update){
         DateTime dateTime = new DateTime();
@@ -111,7 +121,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     private void processTheDateFromCallback(String callbackData, Update update) throws TelegramApiException {
         if (botService.checkTheDate(callbackData)) {
-            if (botService.createRequest(makeRequestID(update), callbackData)) {
+            if (botService.createRequest(makeRequestID(update), callbackData, update.getCallbackQuery().getMessage().getChatId())) {
                 askPersons(update.getCallbackQuery().getMessage().getChatId());
             } else {
                 sendMessage(update.getCallbackQuery().getMessage().getChatId(), BotCommons.TEXT_SOMETHING_WRONG);
@@ -123,7 +133,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     private void processThePersonsFromCallback(String callbackData, Update update) throws TelegramApiException {
         if (botService.setPersonsToRequest(makeRequestID(update), callbackData)) {
-            ArrayList<String> availableTime = botService.findAvailableTime(makeRequestID(update));
+            ArrayList<String> availableTime = botService.availableTimeTest(makeRequestID(update));
             askTime(update.getCallbackQuery().getMessage().getChatId(), availableTime);
         } else {
             sendMessage(update.getCallbackQuery().getMessage().getChatId(), BotCommons.TEXT_SOMETHING_WRONG);
@@ -138,13 +148,12 @@ public class TelegramBot extends TelegramLongPollingBot {
         }
     }
 
-    private void processThePhoneNumberFromCallback(long chatId, Update update, String messageText, String username) {
-        if(botService.setNamePhoneToRequest(makeRequestID(update), messageText, username)) {
-            if (botService.putRequest(makeRequestID(update), update.getMessage().getChat().getUserName())) {
-                sendMessage(chatId, BotCommons.TEXT_SUCCESS_BOOKING);
-            } else {
-                sendMessage(chatId, BotCommons.TEXT_SOMETHING_WRONG);
-            }
+    private void processThePhoneNumberFromCallback(long chatId, Update update, String phoneNumber, String username) throws TelegramApiException {
+        if(botService.setNamePhoneToRequest(makeRequestID(update), phoneNumber, username)) {
+            sendMessage(chatId, BotCommons.TEXT_WAIT_FOR_CONFIRMATION);
+            sendRequestToAdmin(botService.findRequest(makeRequestID(update)));
+        }else {
+            sendMessage(chatId, BotCommons.TEXT_SOMETHING_WRONG);
         }
     }
 }

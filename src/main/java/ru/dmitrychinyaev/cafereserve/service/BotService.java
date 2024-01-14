@@ -1,13 +1,17 @@
 package ru.dmitrychinyaev.cafereserve.service;
 
 import lombok.RequiredArgsConstructor;
+import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
+import ru.dmitrychinyaev.cafereserve.entity.BotCommons;
 import ru.dmitrychinyaev.cafereserve.entity.ReservationRequest;
 import ru.dmitrychinyaev.cafereserve.repository.BadDaysRepository;
 import ru.dmitrychinyaev.cafereserve.repository.RequestRepository;
 import ru.dmitrychinyaev.cafereserve.repository.Tables2PersonsRepository;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Locale;
 import java.util.Optional;
 
 @Service
@@ -17,8 +21,8 @@ public class BotService {
     private final Tables2PersonsRepository tables2PersonsRepository;
     private final BadDaysRepository badDaysRepository;
 
-    public boolean createRequest(String requestName, String date){
-        return requestRepository.addRequest(requestName, new ReservationRequest(date));
+    public boolean createRequest(String requestName, String date, Long chatID){
+        return requestRepository.addRequest(requestName, new ReservationRequest(date, chatID));
     }
     public boolean setPersonsToRequest(String requestID, String persons){
         return requestRepository.setPersons(requestID, persons);
@@ -59,5 +63,27 @@ public class BotService {
 
     public boolean checkTheDate(String callbackData) {
         return badDaysRepository.ifExist(callbackData);
+    }
+
+    public ArrayList<String> availableTimeTest(String requestID){
+        ArrayList<String> availableTime = new ArrayList<>();
+        Optional<ReservationRequest> requestToFind = Optional.ofNullable(requestRepository.getRequest(requestID));
+        if(requestToFind.isEmpty()){
+            return null;
+        }
+
+        String date = requestToFind.get().getDate();
+        DateTime dateTime = new DateTime();
+        String dateToCompare = dateTime
+                .toString("dd");
+        int time = Integer.parseInt(dateTime.toString("HH"));
+        if (!(date.equals(dateToCompare) && time > 12)) {
+            time = 12;
+        }
+        for (int i = time; i < 22; i++) {
+            availableTime.add(time + ":00");
+            time++;
+        }
+        return availableTime;
     }
 }

@@ -19,6 +19,7 @@ public class BotCommons {
     public static final String TEXT_SUCCESS_BOOKING = "Вы успешно забронировали!";
     public static final String TEXT_SOMETHING_WRONG = "Что-то пошло не так. Попробуйте начать заново. Нажмите команду /start";
     public static final String TEXT_SUBJECT_EMAIL = "Новое бронирование";
+    public static final String TEXT_WAIT_FOR_CONFIRMATION = "Подождите ответа от администратора";
 
     //regex
     public static final String REGEX_PHONE_NUMBER = "^[\\+]?[(]?[0-9]{3}[)]?[-\\s\\.]?[0-9]{3}[-\\s\\.]?[0-9]{4,6}$";
@@ -27,4 +28,5 @@ public class BotCommons {
     public static final String REGEX_ASK_PEOPLE = "\\d";
     public static final String REGEX_DAY_MONTH = "dd.MM";
     public static final String REGEX_DAY = "dd";
+
 }
