@@ -20,6 +20,7 @@ public class BotCommons {
     public static final String TEXT_SOMETHING_WRONG = "Что-то пошло не так. Попробуйте начать заново. Нажмите команду /start";
     public static final String TEXT_SUBJECT_EMAIL = "Новое бронирование";
     public static final String TEXT_WAIT_FOR_CONFIRMATION = "Подождите ответа от администратора";
+    public static final String TEXT_BOOKING_COMPLETED = "Обработано";
     public static final String TEXT_UNSUCCESSFUL_BOOKING = "К сожалению, на данное время нет свободных столов.";
 
     //regex
@@ -29,5 +30,7 @@ public class BotCommons {
     public static final String REGEX_ASK_PEOPLE = "\\d";
     public static final String REGEX_DAY_MONTH = "dd.MM";
     public static final String REGEX_DAY = "dd";
+    public static final String REGEX_SUCCESSFUL_ADMIN_RESPONSE = "pos\\d+";
+    public static final String REGEX_UNSUCCESSFUL_ADMIN_RESPONSE = "neg\\d+";
 
 }

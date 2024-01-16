@@ -67,10 +67,11 @@ public class TelegramBot extends TelegramLongPollingBot {
                     processThePersonsFromCallback(callbackData, update);
                 } else if (Pattern.matches(BotCommons.REGEX_ASK_TIME, callbackData)) {
                     processTheTimeFromCallback(callbackData, update);
-                } else if (Pattern.matches("pos\\d+", callbackData) && update.getCallbackQuery().getMessage().getChatId()==942625769L) {
+                } else if (Pattern.matches(BotCommons.REGEX_SUCCESSFUL_ADMIN_RESPONSE, callbackData) && update.getCallbackQuery().getMessage().getChatId()==942625769L) {
                     Long chatIDExtracted = extractChatID(callbackData);
                     sendMessage(chatIDExtracted, BotCommons.TEXT_SUCCESSFUL_BOOKING);
-                } else if (Pattern.matches("neg\\d+", callbackData) && update.getCallbackQuery().getMessage().getChatId()==942625769L) {
+                    sendMessage(942625769L, BotCommons.TEXT_BOOKING_COMPLETED);
+                } else if (Pattern.matches(BotCommons.REGEX_UNSUCCESSFUL_ADMIN_RESPONSE, callbackData) && update.getCallbackQuery().getMessage().getChatId()==942625769L) {
                     Long chatIDExtracted = extractChatID(callbackData);
                     sendMessage(chatIDExtracted, BotCommons.TEXT_UNSUCCESSFUL_BOOKING);
                 }
@@ -95,7 +96,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     private void askDate(long chatId) throws TelegramApiException {
         execute(botServiceKeyboard.dateKeyboard(chatId));
     }
-
+    //TODO ответ администатору после его ответа. Перенеси дату в отображении администратору. Добавить месяц. Добавить чтобы бронирование показывалось клиенту. Добавить информацию как писать номер телефона
     private void askPersons(long chatId) throws TelegramApiException {
         execute(botServiceKeyboard.personsKeyboard(chatId));
     }
