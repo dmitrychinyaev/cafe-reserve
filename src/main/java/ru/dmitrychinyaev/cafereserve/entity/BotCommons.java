@@ -30,7 +30,13 @@ public class BotCommons {
     public static final String REGEX_ASK_PEOPLE = "\\d";
     public static final String REGEX_DAY_MONTH = "dd.MM";
     public static final String REGEX_DAY = "dd";
+    public static final String REGEX_HOUR = "HH";
     public static final String REGEX_SUCCESSFUL_ADMIN_RESPONSE = "pos\\d+";
     public static final String REGEX_UNSUCCESSFUL_ADMIN_RESPONSE = "neg\\d+";
+    public static final int NUM_OF_LETTERS_AHEAD_ID = 3;
+
+    //numbers
+    public static final int OPENING_HOUR = 12;
+    public static final int CLOSING_HOUR = 22;
 
 }

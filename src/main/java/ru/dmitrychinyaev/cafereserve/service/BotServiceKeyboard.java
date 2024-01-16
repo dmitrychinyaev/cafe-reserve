@@ -23,19 +23,25 @@ public class BotServiceKeyboard {
         InlineKeyboardMarkup markupInLine = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
         List<InlineKeyboardButton> rowInLine = new ArrayList<>();
+        List<InlineKeyboardButton> rowInLine2 = new ArrayList<>();
 
         DateTime dateTime = new DateTime();
         for (int i = 0; i < 8; i++) {
             var button = new InlineKeyboardButton();
             String date = dateTime
                     .plusDays(i)
-                    .toString(BotCommons.REGEX_DAY);
+                    .toString(BotCommons.REGEX_DAY_MONTH);
             button.setText(date);
             button.setCallbackData(date);
-            rowInLine.add(button);
+            if (i < 4) {
+                rowInLine.add(button);
+            } else {
+                rowInLine2.add(button);
+            }
         }
 
         rowsInLine.add(rowInLine);
+        rowsInLine.add((rowInLine2));
         markupInLine.setKeyboard(rowsInLine);
         message.setReplyMarkup(markupInLine);
         return message;
@@ -119,7 +125,7 @@ public class BotServiceKeyboard {
     public SendMessage requestToAdmin(ReservationRequest reservationRequest) {
         SendMessage message = new SendMessage();
         message.setChatId(adminID);
-        message.setText(Arrays.toString(reservationRequest.getArrayOfData()));
+        message.setText(reservationRequest.getDataForAdmin());
 
         InlineKeyboardMarkup markupInLine = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();

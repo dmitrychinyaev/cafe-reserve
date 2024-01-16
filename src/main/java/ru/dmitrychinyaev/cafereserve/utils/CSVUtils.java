@@ -11,7 +11,8 @@ import java.io.IOException;
 public class CSVUtils {
     public void write(ReservationRequest requestToWrite){
         try(CSVWriter writer = new CSVWriter(new FileWriter("backup.csv", true))){
-            writer.writeNext(requestToWrite.getArrayOfData());
+            String [] arrayToWrite = requestToWrite.getDataForAdmin().split(" ");
+            writer.writeNext(arrayToWrite);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

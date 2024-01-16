@@ -96,7 +96,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     private void askDate(long chatId) throws TelegramApiException {
         execute(botServiceKeyboard.dateKeyboard(chatId));
     }
-    //TODO ответ администатору после его ответа. Перенеси дату в отображении администратору. Добавить месяц. Добавить чтобы бронирование показывалось клиенту. Добавить информацию как писать номер телефона
+    //TODO Перенеси дату в отображении администратору. Добавить месяц. Добавить чтобы бронирование показывалось клиенту. Добавить информацию как писать номер телефона
     private void askPersons(long chatId) throws TelegramApiException {
         execute(botServiceKeyboard.personsKeyboard(chatId));
     }
@@ -166,6 +166,6 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
 
     private Long extractChatID(String callback){
-        return Long.valueOf(callback.substring(3));
+        return Long.valueOf(callback.substring(BotCommons.NUM_OF_LETTERS_AHEAD_ID));
     }
 }
