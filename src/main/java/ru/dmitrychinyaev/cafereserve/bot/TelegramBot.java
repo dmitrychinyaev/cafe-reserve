@@ -39,23 +39,19 @@ public class TelegramBot extends TelegramLongPollingBot {
             long chatId = update.getMessage().getChatId();
             String username = getUsername(update);
 
-            if (Pattern.matches(BotCommons.COMMAND_START, messageText)) {
-                sendMessage(chatId, String.format(BotCommons.TEXT_GREETING, username));
-                try {
+            try {
+                if (Pattern.matches(BotCommons.COMMAND_START, messageText)) {
+                    sendMessage(chatId, String.format(BotCommons.TEXT_GREETING, username));
                     askDate(chatId);
-                } catch (TelegramApiException e) {
-                    throw new RuntimeException(e);
-                }
-            } else if (Pattern.matches(BotCommons.REGEX_PHONE_NUMBER, messageText)) {
-                try {
+                } else if (Pattern.matches(BotCommons.REGEX_PHONE_NUMBER, messageText)) {
                     processThePhoneNumberFromCallback(chatId, update, messageText, username);
-                } catch (TelegramApiException e) {
-                    throw new RuntimeException(e);
+                } else if (Pattern.matches("showID", messageText)) {
+                    sendMessage(chatId, String.valueOf(chatId));
+                } else {
+                    sendMessage(chatId, BotCommons.TEXT_TRY_AGAIN);
                 }
-            } else if (Pattern.matches("showID", messageText)) {
-                sendMessage(chatId, String.valueOf(chatId));
-            } else {
-                sendMessage(chatId, BotCommons.TEXT_TRY_AGAIN);
+            } catch (TelegramApiException e) {
+                throw new RuntimeException(e);
             }
 
         } else if (update.hasCallbackQuery()) {
@@ -96,7 +92,8 @@ public class TelegramBot extends TelegramLongPollingBot {
     private void askDate(long chatId) throws TelegramApiException {
         execute(botServiceKeyboard.dateKeyboard(chatId));
     }
-    //TODO Перенеси дату в отображении администратору. Добавить месяц. Добавить чтобы бронирование показывалось клиенту. Добавить информацию как писать номер телефона
+
+    //TODO Добавить чтобы бронирование показывалось клиенту. Добавить информацию как писать номер телефона
     private void askPersons(long chatId) throws TelegramApiException {
         execute(botServiceKeyboard.personsKeyboard(chatId));
     }
@@ -157,7 +154,8 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     private void processThePhoneNumberFromCallback(long chatId, Update update, String phoneNumber, String username) throws TelegramApiException {
         if(botService.setNamePhoneToRequest(makeRequestID(update), phoneNumber, username)) {
-            sendMessage(chatId, BotCommons.TEXT_WAIT_FOR_CONFIRMATION);
+            ReservationRequest request = botService.findRequest(makeRequestID(update));
+            sendMessage(chatId, request.successBooking() + "\n" + BotCommons.TEXT_WAIT_FOR_CONFIRMATION);
             sendRequestToAdmin(botService.findRequest(makeRequestID(update)));
             botService.removeRequest(makeRequestID(update));
         }else {
