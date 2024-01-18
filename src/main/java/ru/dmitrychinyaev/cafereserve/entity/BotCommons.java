@@ -25,8 +25,8 @@ public class BotCommons {
 
     //regex
     public static final String REGEX_PHONE_NUMBER = "^[\\+]?[(]?[0-9]{3}[)]?[-\\s\\.]?[0-9]{3}[-\\s\\.]?[0-9]{4,6}$";
-    public static final String REGEX_ASK_DATE = "\\d{2}";
-    public static final String REGEX_ASK_TIME = "\\d{2}:00";
+    public static final String REGEX_ASK_DATE = "\\d{2}\\.\\d{2}";
+    public static final String REGEX_ASK_TIME = "\\d{2}\\:00";
     public static final String REGEX_ASK_PEOPLE = "\\d";
     public static final String REGEX_DAY_MONTH = "dd.MM";
     public static final String REGEX_DAY = "dd";

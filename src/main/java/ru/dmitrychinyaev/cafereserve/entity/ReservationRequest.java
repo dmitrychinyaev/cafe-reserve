@@ -24,7 +24,7 @@ public class ReservationRequest {
     //TODO сделать проверку даты. Если число 01, а выбор даты произошел в конце месяца, то месяц будет тот же а не след
 
     public String successBooking(){
-        return "Бронь на " + this.getDate()  + " в " + this.getTime() + "на" + this.persons + "чел";
+        return "Бронь на " + this.getDate()  + " в " + this.getTime() + " на " + this.persons + " чел";
     }
 
     public String getDataForAdmin(){
